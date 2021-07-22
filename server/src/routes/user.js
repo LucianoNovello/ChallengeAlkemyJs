@@ -22,7 +22,11 @@ router.post('/signup',  (req, res) => {
         email,
         pass
     }
-    pool.query('INSERT INTO users SET ? ', [newUser])
-    res.send('received')
+    try{
+    pool.query('INSERT INTO users SET ? ', [newUser])}
+    catch(err){
+        res.send('User not available')
+    }
+    
 })
 module.exports = router

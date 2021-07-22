@@ -87,14 +87,15 @@ const Login = () => {
                         className= 'btn btn-dark btn-block mt-4'
                         value='Register'
                         type='submit'/>
-
+                        
+              
                 </form>
 
                 <button onClick= {LoginUser} className="btn btn-success btn-block mt-3">Sign In</button>
                 {
                     msgError != null ?
                     (
-                        <div>
+                        <div className="alert alert-warning mt-3" role="alert" >
                             {msgError}
                         </div>
                     )
@@ -103,6 +104,7 @@ const Login = () => {
                     <span> </span>
                     )
                 }
+        
                 
             </div>
             <div className="col"></div>
