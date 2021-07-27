@@ -1,59 +1,54 @@
-import React,{ useState,useEffect, useContext } from 'react'
-import {useHistory} from 'react-router-dom'
+import React,{ useState, useContext } from 'react'
+import uniqid from 'uniqid'
 import Axios from 'axios'
+import {useHistory} from 'react-router-dom'
 import { AuthContext } from '../contexts/auth'
-const Login = () => {
-    const {login, msg}= useContext(AuthContext) 
-    const history = useHistory()
+const Register = () => {
+    const {setMessage}= useContext(AuthContext) 
     const [email, setEmail]= useState('')
     const [pass, setPass]= useState('')
+    const history = useHistory()
     const [msgError, setMsgError]=useState(null)
-    useEffect(() => {
-        if (msg) {
-            setMsgError(msg)
-        }
-    }, [])
     const isAValidCase = () => {
         if (!email.trim() && !pass.trim()) setMsgError('Params cant be null');
         if (!pass.trim()) setMsgError('Password cant be null');
         else return email !== '' && pass !== '';
       }
-   
-    const LoginUser = async(e)=>{
+    const RegisterUser=async(e)=>{
         e.preventDefault()
         const validCase = isAValidCase()
         if(validCase){
-            const userLog ={
-                email:email,
-                pass:pass   
+        const user={
+        id_user : uniqid(),
+        email: email,
+        pass: pass,
             }
-            await Axios.post('http://localhost:4000/user/signin',userLog).then((resp => {
-                if(resp.data.trim)setMsgError(resp.data)
-                else{
-                    const idUser = resp.data[0].id_user
-                    const logged={
-                        id: idUser,
-                        email: resp.data[0].email
+            await Axios.post('http://localhost:4000/user/signup', user).then((resp => {
+                if (resp.data.trim) {
+                    if (resp.data === 'Success') {
+                        setMessage('Success')
+                        history.push('/login')
                     }
-                    login(logged)
-                    history.push(`/transactions/${idUser}`)
+                    else{
+                        setMsgError(resp.data)
+                        console.log(msgError)
+                    }
                 }
-            }))
+                
+                
 
-        }else{
-            setMsgError('Email or Password Required')
-        }
-        
-
-        
+    }))
+     
+  
+    setEmail('')
+    setPass('')
+}
     }
-    
-    
-    return (
+   return (
         <div className= "row mt-5">
             <div className="col"></div>
             <div className="col">
-                <form onSubmit={LoginUser} className='form-group'>
+                <form onSubmit={RegisterUser} className='form-group'>
                     <input
                         value = {email} 
                         onChange={(e)=>{setEmail(e.target.value)}}
@@ -71,7 +66,7 @@ const Login = () => {
                         />
                     <input
                         className= 'btn btn-primary btn-block mt-4'
-                        value='Login'
+                        value='Register'
                         type='submit'/>
                         
               
@@ -89,12 +84,11 @@ const Login = () => {
                     <span> </span>
                     )
                 }
-        
                 
             </div>
             <div className="col"></div>
         </div>
     )
-}
 
-export default Login
+            }
+export default Register

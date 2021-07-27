@@ -6,6 +6,7 @@ import Login from './components/login'
 import Menu from './components/navbar'
 import Logout from './components/logout'
 import AuthContext from './contexts/auth'
+import Register from './components/register'
 
 
 function App() {
@@ -16,9 +17,11 @@ function App() {
 <Router>
 <Menu/>
   <Switch>
+  <Route exact path='/' component={Login}></Route>
+  <Route   path='/login' component = {Login}></Route>
   <Route  path = '/transactions/:idUser' component={Form}></Route>
-  <Route exact path='/' component = {Login}></Route>
-  <Route path="/logout" component={Logout}></Route>
+  <Route path = '/register' component = {Register}></Route>
+  <Route path='/logout' component={Logout}></Route>
 
   </Switch>
 </Router>

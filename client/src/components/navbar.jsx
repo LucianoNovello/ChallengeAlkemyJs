@@ -6,28 +6,33 @@ import { AuthContext } from '../contexts/auth'
 
 const Menu = () => {
     const history = useHistory()
-    const {loggedUser}= useContext(AuthContext) 
+    const {userLogin}= useContext(AuthContext) 
     useEffect(()=>{
-        if(!loggedUser)
+   
+        if(!userLogin)
         history.replace('/logout')
-    },[loggedUser?.id])
+    },[userLogin?.id])
+   
     return (
         <div>
-            <nav className='navbar navbar-expand-lg navbar-dark bg-dark '>
-                <ul className='navbar-nav mr-auto'>
+            <nav className='navbar navbar-expand-md navbar-dark bg-primary '>
+                <ul className='navbar-nav me-auto mb-2 mb-lg-0'>
                     <li className='nav-item'>
-                        <Link className='nav-link' to='/'>Inicio</Link>
+                   
                     </li>
                     <li>
                     {
-                    !loggedUser ?
+                    !userLogin ?
                     (
-                        <Link className='nav-link' to='/'>Login</Link>
+                    <div className='navbar-nav me-auto mb-2 mb-lg-0'>
+                        <Link className='nav-link mx-3' exact to='/'>Login</Link>
+                        <Link className= 'nav-link mx-3' to='/register'>Register</Link>
+                    </div>
                     )
                     :
                     (
                         <Link 
-                        className= 'btn btn-danger ' to='/logout'> Sign Out</Link>
+                        className= 'btn btn-danger mx-3 ' to='/logout'> Sign Out</Link>
                     ) 
                 }
                         

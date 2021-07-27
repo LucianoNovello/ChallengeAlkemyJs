@@ -3,22 +3,27 @@ import React, { createContext, useState } from 'react'
 export const AuthContext = createContext({})
 
 const AuthProvider = ({ children }) => {
-    const [loggedUser, setLoggedUser] = useState(null)
+    const [userLogin, setUserLogin] = useState('')
+    const [msg, setMsg]= useState('')
 
     const login = (user) => {
-        setLoggedUser(user)
+        setUserLogin(user)
     }
 
     const logout = (user) => {
-        setLoggedUser(null)
+        setUserLogin(null)
     }
-
+    const setMessage=(message)=>{
+        setMsg(msg)
+    }
     return (
         <AuthContext.Provider
             value={{
-                loggedUser,
+           userLogin,
                 login,
-                logout
+                logout,
+                msg,
+                setMessage
             }}
         >
             {children}

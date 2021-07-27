@@ -80,20 +80,20 @@ router.post('/add', (req, res) => {
 router.post('/foundTransactionsByCategory', (req, res) => {
 
     const { id_user, category } = req.body;
- 
 
-    const sqlFoundTransByCat = ` SELECT * FROM transactions WHERE id_user = '${id_user}' and category = '${category} ORDER BY id_transaction DESC LIMIT 10 ' `;
-
-    sql.query(sqlFoundTransByCat, (err, results) => {
+    pool.query( `SELECT * FROM transactions WHERE id_user = '${id_user}' and category = '${category}' ORDER BY trans_date DESC LIMIT 10  `, (err, results) => {
         if (err) {
-            res.status(400).send(err);
-            return;
+            res.status(400).send(err)
+            return
         }
-        if (results.length) res.json(results);
-        else res.json({});
-    });
-});
+        if (results.length) res.json(results)
+    
+        else res.send('Empty list')
+   
+        
+    })
+})
 module.exports = router
 
 
-//SELECT SUM(amount) FROM transactions WHERE id_user = ${id_user} and type_movement = 'deposit';
+
