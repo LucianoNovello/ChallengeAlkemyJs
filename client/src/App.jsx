@@ -18,7 +18,6 @@ function App() {
 <Menu/>
   <Switch>
   <Route exact path='/' component={Login}></Route>
-  <Route   path='/login' component = {Login}></Route>
   <Route  path = '/transactions/:idUser' component={Form}></Route>
   <Route path = '/register' component = {Register}></Route>
   <Route path='/logout' component={Logout}></Route>

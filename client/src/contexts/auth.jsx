@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
         setUserLogin(null)
     }
     const setMessage=(message)=>{
-        setMsg(msg)
+        setMsg(message)
     }
     return (
         <AuthContext.Provider

@@ -63,8 +63,9 @@ const Form = () => {
     }
     const setTransaction = async (e) => {
         e.preventDefault()
+        if(amount>=0){
         try {
-            await Axios.post("http://localhost:4000/transactions/add", {
+            await Axios.post('http://localhost:4000/transactions/add', {
                 id_transaction: uniqid(),
                 amount: amount,
                 concept: concept,
@@ -80,10 +81,14 @@ const Form = () => {
         catch (err) {
             setError('Error en base de datos')
         }
+
+    }else{
+        setSuccess('Put a positive amount')
     }
+}
     const deleteTransaction = async (id_transaction) => {
         try {
-            await Axios.delete("http://localhost:4000/transactions/delete", { data: { id_transaction } }).then(() => {
+            await Axios.delete('http://localhost:4000/transactions/delete', { data: { id_transaction } }).then(() => {
                 if (transList.length === 1) {
                     setTransList([])
                 }
@@ -107,7 +112,7 @@ const Form = () => {
             id_transaction: idTransaction
         }
         try {
-            await Axios.patch("http://localhost:4000/transactions/editTransaction", transactionEdited).then((resp => {
+            await Axios.patch('http://localhost:4000/transactions/editTransaction', transactionEdited).then((resp => {
                 setAmount('')
                 setConcept('')
                 setTransDate('')
@@ -128,11 +133,11 @@ const Form = () => {
 
     const editAvailable = async (id_transaction) => {
         try {
-            Axios.post("http://localhost:4000/transactions/getByIdTransaction", { id_transaction }).then((response) => {
+            Axios.post('http://localhost:4000/transactions/getByIdTransaction', { id_transaction }).then((response) => {
                 setAmount(response.data[0].amount)
                 setCategory(response.data[0].category)
                 setConcept(response.data[0].concept)
-                setTransDate(moment(response.data[0].trans_date).format("YYYY-MM-DD"))
+                setTransDate(moment(response.data[0].trans_date).format('YYYY-MM-DD'))
                 setTypeMovement(response.data[0].type_movement)
                 setIdTransaction(response.data[0].id_transaction)
                 setEdit(true)
@@ -150,7 +155,7 @@ const Form = () => {
 
      
         try {
-            await Axios.post("http://localhost:4000/transactions/foundTransactionsByCategory", { id_user: userLogin.id, category: selectedCategory }).then(resp => {
+            await Axios.post('http://localhost:4000/transactions/foundTransactionsByCategory', { id_user: userLogin.id, category: selectedCategory }).then(resp => {
             if(resp.data === 'Empty list'){
                 setError(resp.data)
             }    
@@ -174,7 +179,7 @@ const Form = () => {
         }
         
         try {
-            await Axios.post("http://localhost:4000/transactions/getTransactionsByIdUser", user).then((resp => {
+            await Axios.post('http://localhost:4000/transactions/getTransactionsByIdUser', user).then((resp => {
                 if (resp.data.trim) {
                     setError(resp.data)
                 }
@@ -214,19 +219,19 @@ const Form = () => {
         }
 
     return (
-        <div className="container ">
-            <div className="row">
-                <div className="col">
+        <div className='container '>
+            <div className='row'>
+                <div className='col'>
                     <h2>Transaction Form</h2>
-                    <form onSubmit={!edit ? (setTransaction) : (editTransaction)} className="form-group">
+                    <form onSubmit={!edit ? (setTransaction) : (editTransaction)} className='form-group'>
                         <p>Concept</p>
-                        <input value={concept} onChange={(e) => { setConcept(e.target.value) }} placeholder="Introduce Concept" className="form-control mb-3" type="text" required></input>
+                        <input value={concept} onChange={(e) => { setConcept(e.target.value) }} placeholder='Introduce Concept' className='form-control mb-3' type='text' required></input>
                         <br />
                         <p>Amount</p>
-                        <input value={amount} onChange={(e) => { setAmount(e.target.value) }} placeholder="Introduce Amount" className="form-control mb-3" type="number" required></input>
+                        <input value={amount} onChange={(e) => { setAmount(e.target.value) }} placeholder='Introduce Amount' className='form-control mb-3' type='number' min='0' required></input>
                         <div className='mb-3'>
                             <br></br>
-                            <label className=" justify-content-between">Type of Movement</label>
+                            <label className=' justify-content-between'>Type of Movement</label>
                             {
                                 edit ?
                                     (
@@ -247,11 +252,11 @@ const Form = () => {
                         </div>
                         <br />
                         <div className='mb-3'>
-                            <label className=" justify-content-between">Category</label>
+                            <label className=' justify-content-between'>Category</label>
                             {
                                 edit ?
                                     (
-                                        <select className=" form-control block mt-1" onChange={(e) => setCategory(e.target.value)} required value={category} >
+                                        <select className=' form-control block mt-1' onChange={(e) => setCategory(e.target.value)} required value={category} >
                                         {
                                             TYPE_CATEGORY_OPTIONS.map((o, i) => (
                                                 o.label !== 'SELECT 1 OPTION' ? (
@@ -281,13 +286,13 @@ const Form = () => {
                         </div>
                         <br />
                         <p>Introduce date of the transaction</p>
-                        <input value={transDate} onChange={(e) => { setTransDate(e.target.value) }} className="form-control mb-3" type="date" required ></input>
+                        <input value={transDate} onChange={(e) => { setTransDate(e.target.value) }} className='form-control mb-3' type='date' required ></input>
                         {!edit ?
-                            (<input value='Add Transaction' className="btn btn-primary btn-block mb-3" type="submit"></input>) :
+                            (<input value='Add Transaction' className='btn btn-primary btn-block mb-3' type='submit'></input>) :
                             (
                                 <div>
-                                <input value='Update Transaction' className="btn btn-primary btn-block mb-3" type="submit"></input>
-                                <button onClick={back} className="btn btn-danger btn-block mb-3 mx-3 "> Back </button>
+                                <input value='Update Transaction' className='btn btn-primary btn-block mb-3' type='submit'></input>
+                                <button onClick={back} className='btn btn-danger btn-block mb-3 mx-3 '> Back </button>
                                 </div>
                                 )
 
@@ -297,7 +302,7 @@ const Form = () => {
                     </form>
                     
                     { success ?(
-                        <div className="alert alert-warning mt-3" role="alert">{success}</div>
+                        <div className='alert alert-warning mt-3' role='alert'>{success}</div>
                     ):(
                         <span></span>
                     )}
@@ -305,12 +310,12 @@ const Form = () => {
 
 
                 </div>
-                <div className="col d-flex flex-column ">
+                <div className='col d-flex flex-column '>
 
                     <h2>Transacion List</h2>
 
 
-                    <ul className="list-group mt-4 ">{
+                    <ul className='list-group mt-4 '>{
 
                         transList.length === 0 ? (
 
@@ -324,16 +329,16 @@ const Form = () => {
 
                                 transList.map(item => (
 
-                                    <li className="d-flex text-align-center list-group-item mx-2" key={item.id_transaction}>
-                                        <div className="mx-3" >Concept {item.concept}</div>
-                                        <div className="mx-3"> Amount {item.amount}</div>
-                                        <div className="mx-3"> Movement {item.type_movement}</div>
-                                        <div className="mx-3"> Category {item.category}</div>
-                                        <div className="mx-3 me-3"> Date {moment(item.trans_date).format("YYYY-MM-DD")}</div>
+                                    <li className='d-flex text-align-center list-group-item mx-2' key={item.id_transaction}>
+                                        <div className='mx-3' >Concept {item.concept}</div>
+                                        <div className='mx-3'> Amount {item.amount}</div>
+                                        <div className='mx-3'> Movement {item.type_movement}</div>
+                                        <div className='mx-3'> Category {item.category}</div>
+                                        <div className='mx-3 me-3'> Date {moment(item.trans_date).format('YYYY-MM-DD')}</div>
 
-                                        <div className="container d-flex text-align-center justify-content-end">
-                                            <button onClick={(id_transaction) => (editAvailable(item.id_transaction))} className="btn btn-primary btn-block mx-2">Edit</button>
-                                            <button onClick={(id_transaction) => (deleteTransaction(item.id_transaction))} className="btn btn-danger btn-block">Delete</button>
+                                        <div className='container d-flex text-align-center justify-content-end'>
+                                            <button onClick={(id_transaction) => (editAvailable(item.id_transaction))} className='btn btn-primary btn-block mx-2'>Edit</button>
+                                            <button onClick={(id_transaction) => (deleteTransaction(item.id_transaction))} className='btn btn-danger btn-block'>Delete</button>
 
                                         </div>
                                     </li>
@@ -360,10 +365,10 @@ const Form = () => {
                             ))}
                         </select>
                         <br/>
-                        <button onClick={getTransactions} className="btn btn-primary btn-block mt-2 mx-2">List of Transactions without Filter</button>
-                        <button onClick={filterByCategories} className="btn btn-info btn-block mt-2 "> List of Transactios with filter</button>
+                        <button onClick={getTransactions} className='btn btn-primary btn-block mt-2 mx-2'>List of Transactions without Filter</button>
+                        <button onClick={filterByCategories} className='btn btn-info btn-block mt-2 '> List of Transactios with filter</button>
                     </div>
-                    <div className="col d-flex flex-column ">
+                    <div className='col d-flex flex-column '>
                         <h1>Account Balance</h1>
                         <h2>${totalAmount}</h2>
                         </div>

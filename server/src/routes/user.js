@@ -28,7 +28,7 @@ router.post('/signup',  (req, res) => {
         res.send('User not available')
     }
     else{
-        res.send('Success')
+        res.send('Successful registration')
     }
     
 })

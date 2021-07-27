@@ -1,4 +1,4 @@
-import React,{ useState,useEffect, useContext } from 'react'
+import React,{ useState, useEffect, useContext } from 'react'
 import {useHistory} from 'react-router-dom'
 import Axios from 'axios'
 import { AuthContext } from '../contexts/auth'
@@ -8,11 +8,7 @@ const Login = () => {
     const [email, setEmail]= useState('')
     const [pass, setPass]= useState('')
     const [msgError, setMsgError]=useState(null)
-    useEffect(() => {
-        if (msg) {
-            setMsgError(msg)
-        }
-    }, [])
+   
     const isAValidCase = () => {
         if (!email.trim() && !pass.trim()) setMsgError('Params cant be null');
         if (!pass.trim()) setMsgError('Password cant be null');
@@ -50,9 +46,10 @@ const Login = () => {
     
     
     return (
-        <div className= "row mt-5">
-            <div className="col"></div>
-            <div className="col">
+        <div className= 'row mt-5'>
+            <div className='col'></div>
+            <div className='col'>
+            <h1>Login Form</h1>
                 <form onSubmit={LoginUser} className='form-group'>
                     <input
                         value = {email} 
@@ -73,26 +70,35 @@ const Login = () => {
                         className= 'btn btn-primary btn-block mt-4'
                         value='Login'
                         type='submit'/>
-                        
+                        {
+                            msg === 'Successful registration'?
+                            (  <div className='alert alert-warning mt-3' role='alert' >
+                            {msg}
+                           
+                        </div>):(
+                            <span></span>
+                        )}
               
                 </form>
 
-                {
+                { 
                     msgError != null ?
                     (
-                        <div className="alert alert-warning mt-3" role="alert" >
+                        <div className='alert alert-warning mt-3' role='alert' >
                             {msgError}
+                           
                         </div>
                     )
                     :
                     (
+                        
                     <span> </span>
                     )
                 }
         
                 
             </div>
-            <div className="col"></div>
+            <div className='col'></div>
         </div>
     )
 }

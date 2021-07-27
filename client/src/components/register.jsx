@@ -25,13 +25,12 @@ const Register = () => {
             }
             await Axios.post('http://localhost:4000/user/signup', user).then((resp => {
                 if (resp.data.trim) {
-                    if (resp.data === 'Success') {
-                        setMessage('Success')
-                        history.push('/login')
+                    if (resp.data === 'Successful registration') {
+                        setMessage(resp.data)
+                        history.push('/')
                     }
                     else{
                         setMsgError(resp.data)
-                        console.log(msgError)
                     }
                 }
                 
@@ -48,6 +47,7 @@ const Register = () => {
         <div className= "row mt-5">
             <div className="col"></div>
             <div className="col">
+            <h1>Register Form</h1>
                 <form onSubmit={RegisterUser} className='form-group'>
                     <input
                         value = {email} 
