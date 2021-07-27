@@ -3,9 +3,9 @@ import {useHistory} from 'react-router-dom'
 import { AuthContext } from '../contexts/auth'
 const Logout = () => {
     const history = useHistory()
-    const {logout}= useContext(AuthContext) 
+    const {logout, setMessage}= useContext(AuthContext) 
     useEffect(()=>{
-
+        setMessage(null)
         logout()
         history.replace('/')
     },[])

@@ -73,7 +73,7 @@ const Register = () => {
                 </form>
 
                 {
-                    msgError != null ?
+                    msgError !== null ?
                     (
                         <div className="alert alert-warning mt-3" role="alert" >
                             {msgError}

@@ -27,6 +27,7 @@ const Form = () => {
     useEffect(() => {
         if (!userLogin) {
             history.replace('/logout')
+            
         }
         getTransactions()
         totalMovements()
@@ -350,8 +351,8 @@ const Form = () => {
                     }</ul>
                     <div>
                  
-                        <p>Filter By</p>
-                        <select className='mt-2' onChange={(e) => setSelectedCategory(e.target.value)} defaultValue={TYPE_CATEGORY_OPTIONS[0].value} required >
+                        <b className= 'mx-2'>Filter By</b>
+                        <select className=' mt-2' onChange={(e) => setSelectedCategory(e.target.value)} defaultValue={TYPE_CATEGORY_OPTIONS[0].value} required >
                             {TYPE_CATEGORY_OPTIONS.map((o, i) => (
                                 o.label !== 'SELECT 1 OPTION' ?
                                 (
@@ -365,10 +366,10 @@ const Form = () => {
                             ))}
                         </select>
                         <br/>
-                        <button onClick={getTransactions} className='btn btn-primary btn-block mt-2 mx-2'>List of Transactions without Filter</button>
-                        <button onClick={filterByCategories} className='btn btn-info btn-block mt-2 '> List of Transactios with filter</button>
+                        <button onClick={getTransactions} className='btn btn-primary btn-block mt-3 mx-2'>List of Transactions without Filter</button>
+                        <button onClick={filterByCategories} className='btn btn-info btn-block mt-3 '> List of Transactios with filter</button>
                     </div>
-                    <div className='col d-flex flex-column '>
+                    <div className='col d-flex flex-column mt-2'>
                         <h1>Account Balance</h1>
                         <h2>${totalAmount}</h2>
                         </div>
