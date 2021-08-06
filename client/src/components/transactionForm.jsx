@@ -4,13 +4,12 @@ import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
 import Axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.css'
-import uniqid from 'uniqid'
 import { AuthContext } from '../contexts/auth'
 import moment from 'moment'
 
 const Form = () => {
     const history = useHistory()
-    const { userLogin } = useContext(AuthContext)
+    const { userLogin, getToken } = useContext(AuthContext)
     const [amount, setAmount] = useState('')
     const [concept, setConcept] = useState('')
     const [typeMovement, setTypeMovement] = useState('')
@@ -25,13 +24,17 @@ const Form = () => {
     const [edit, setEdit] = useState('')
     
     useEffect(() => {
-        if (!userLogin) {
+       
+       const token = getToken()
+       console.log(token)
+        if (token === null ) {
             history.replace('/logout')
             
         }
+     
         getTransactions()
         totalMovements()
-    }, [])
+    },  [history])
     const TYPE_CATEGORY_OPTIONS = [
         { label: 'SELECT 1 OPTION', value: 'Undefined' },
         { label: 'Sales', value: 'Sales' },
@@ -67,7 +70,6 @@ const Form = () => {
         if(amount>=0){
         try {
             await Axios.post('http://localhost:4000/transactions/add', {
-                id_transaction: uniqid(),
                 amount: amount,
                 concept: concept,
                 type_movement: typeMovement,

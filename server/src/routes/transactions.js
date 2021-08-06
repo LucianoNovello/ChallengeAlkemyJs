@@ -1,6 +1,7 @@
 const express = require('express')
 const pool = require('../database')
 const router = express.Router()
+const uniqid = require('uniqid')
 router.delete('/delete', (req, res) => {
 
     const { id_transaction } = req.body
@@ -58,7 +59,8 @@ router.patch('/editTransaction', (req, res) => {
 })
 
 router.post('/add', (req, res) => {
-    const { id_transaction,
+    const id_transaction = uniqid()
+    const {
         amount,
         concept,
         type_movement,

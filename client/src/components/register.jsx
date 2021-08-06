@@ -1,5 +1,4 @@
 import React,{ useState, useContext } from 'react'
-import uniqid from 'uniqid'
 import Axios from 'axios'
 import {useHistory} from 'react-router-dom'
 import { AuthContext } from '../contexts/auth'
@@ -19,11 +18,10 @@ const Register = () => {
         const validCase = isAValidCase()
         if(validCase){
         const user={
-        id_user : uniqid(),
         email: email,
-        pass: pass,
+        pass: pass
             }
-            await Axios.post('http://localhost:4000/user/signup', user).then((resp => {
+            await Axios.post('http://localhost:4000/user/register', user).then((resp => {
                 if (resp.data.trim) {
                     if (resp.data === 'Successful registration') {
                         setMessage(resp.data)

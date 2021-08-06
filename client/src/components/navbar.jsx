@@ -6,10 +6,10 @@ import { AuthContext } from '../contexts/auth'
 
 const Menu = () => {
     const history = useHistory()
-    const {userLogin}= useContext(AuthContext) 
+    const {userLogin, getToken}= useContext(AuthContext) 
     useEffect(()=>{
-   
-        if(!userLogin)
+        const tkn = getToken()
+        if(!tkn)
         history.replace('/logout')
     },[userLogin?.id])
    

@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom'
 import Axios from 'axios'
 import { AuthContext } from '../contexts/auth'
 const Login = () => {
-    const {login, msg}= useContext(AuthContext) 
+    const {login, msg, setToken}= useContext(AuthContext) 
     const history = useHistory()
     const [email, setEmail]= useState('')
     const [pass, setPass]= useState('')
@@ -23,13 +23,14 @@ const Login = () => {
                 email:email,
                 pass:pass   
             }
-            await Axios.post('http://localhost:4000/user/signin',userLog).then((resp => {
+            await Axios.post('http://localhost:4000/user/login',userLog).then((resp => {
                 if(resp.data.trim)setMsgError(resp.data)
                 else{
-                    const idUser = resp.data[0].id_user
+                    setToken('user', JSON.stringify(resp.data))
+                    const idUser = resp.data.id_user
                     const logged={
                         id: idUser,
-                        email: resp.data[0].email
+                        email: resp.data.email
                     }
                     login(logged)
                     history.push(`/transactions/${idUser}`)

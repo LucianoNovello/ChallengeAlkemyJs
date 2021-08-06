@@ -4,5 +4,7 @@ module.exports ={
         user: 'root',
         password:'',
         database:'ng_client_db'
-    }
+    },
+    keys:'testkey'
+    
 }
