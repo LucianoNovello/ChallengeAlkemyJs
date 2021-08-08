@@ -5,6 +5,7 @@ export const AuthContext = createContext({})
 const AuthProvider = ({ children }) => {
     const [userLogin, setUserLogin] = useState('')
     const [msg, setMsg]= useState('')
+    const [transaction, setTransaction] = useState('')
     
 
     const login = (user) => {
@@ -19,22 +20,20 @@ const AuthProvider = ({ children }) => {
         setMsg(message)
     }
      
-    const setToken=(user, token)=>{
-        localStorage.setItem(user,token)
-    }
-    const getToken= ()=>{
-        localStorage.getItem('user')
+    const setTrans=(trans)=>{
+        setTransaction(trans)
     }
     return (
         <AuthContext.Provider
             value={{
-           userLogin,
+                userLogin,
                 login,
                 logout,
                 msg,
                 setMessage,
-                setToken,
-                getToken
+                transaction,
+                setTrans
+                
             }}
         >
             {children}

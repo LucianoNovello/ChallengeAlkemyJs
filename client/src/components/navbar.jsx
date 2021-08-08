@@ -1,15 +1,15 @@
 import React,{useContext, useEffect} from 'react'
 import { useHistory } from 'react-router'
 import { Link } from 'react-router-dom'
-import { AuthContext } from '../contexts/auth'
+import { AuthContext } from '../contexts/contextsutils'
 
 
 const Menu = () => {
     const history = useHistory()
-    const {userLogin, getToken}= useContext(AuthContext) 
-    useEffect(()=>{
-        const tkn = getToken()
-        if(!tkn)
+    const {userLogin}= useContext(AuthContext) 
+   useEffect(()=>{
+        
+        if(!userLogin)
         history.replace('/logout')
     },[userLogin?.id])
    

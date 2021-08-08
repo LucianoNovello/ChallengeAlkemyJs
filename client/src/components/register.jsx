@@ -1,7 +1,7 @@
 import React,{ useState, useContext } from 'react'
 import Axios from 'axios'
 import {useHistory} from 'react-router-dom'
-import { AuthContext } from '../contexts/auth'
+import { AuthContext } from '../contexts/contextsutils'
 const Register = () => {
     const {setMessage}= useContext(AuthContext) 
     const [email, setEmail]= useState('')

@@ -1,7 +1,7 @@
-import React,{ useState, useEffect, useContext } from 'react'
+import React,{ useState, useContext } from 'react'
 import {useHistory} from 'react-router-dom'
 import Axios from 'axios'
-import { AuthContext } from '../contexts/auth'
+import { AuthContext } from '../contexts/contextsutils'
 const Login = () => {
     const {login, msg, setToken}= useContext(AuthContext) 
     const history = useHistory()
@@ -26,7 +26,7 @@ const Login = () => {
             await Axios.post('http://localhost:4000/user/login',userLog).then((resp => {
                 if(resp.data.trim)setMsgError(resp.data)
                 else{
-                    setToken('user', JSON.stringify(resp.data))
+                  
                     const idUser = resp.data.id_user
                     const logged={
                         id: idUser,

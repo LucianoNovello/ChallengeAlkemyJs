@@ -4,7 +4,9 @@ const pool = require('../database')
 const CryptoJS = require('crypto-js')
 const uniqid = require('uniqid')
 const {keys}= require('../keys')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken') 
+
+
 router.post('/login', (req, res) => {
     const  email = req.body.email
     const password = req.body.pass
@@ -21,7 +23,7 @@ router.post('/login', (req, res) => {
                 if(originalPass !== password){
                     res.send('User or Password are wrong')   
                 }
-                const accessToken = jwt.sign({id: results[0].id_user, email: results[0].email}, keys, {expiresIn: "15min" })
+                const accessToken = jwt.sign({id: results[0].id_user, email: results[0].email}, keys, {expiresIn: "30s" })
           
                 const {pass, ...info} = results[0]   
                
@@ -34,6 +36,21 @@ router.post('/login', (req, res) => {
         res.send('Error with Database')
     }
 })
+
+const verifyToken =(req,res, next)=>{
+    const authHeader = req.headers.authorization
+    if(authHeader){
+        const token= authHeader.split(' ')[1];
+        jwt.verify(token, keys,(err, user)=>{
+            if(err){
+                return res.status(403).json('token is not valid!')
+            }
+            req.user = user
+            next()
+        })
+    }
+
+}
 
 router.post('/register',  (req, res) => {
     const id_user = uniqid()
