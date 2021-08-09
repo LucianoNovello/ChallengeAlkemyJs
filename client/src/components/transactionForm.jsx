@@ -26,8 +26,8 @@ const Form = () => {
         if (!userLogin) {
             history.replace('/logout')
         }
-       getTransactions()
-     
+        getTransactions()
+
         if (msg) {
             setSuccess(msg)
         }
@@ -48,30 +48,33 @@ const Form = () => {
     ]
 
     const getTransactions = async () => {
-       
-     const user={
-         id_user: userLogin.id
-     }
+
+        const user = {
+            id_user: userLogin.id
+        }
+
         try {
-           
-            await Axios.post('http://localhost:4000/transactions/getTransactionsByIdUser',user, {headers:{authorization:"Bearer " + userLogin.token}},).then((resp) => {
-           
-                if (resp.data.trim) {
-                    setError('Empty List')
+
+            await Axios.get(`http://localhost:4000/transactions/list/${user.id_user}`, { headers: { authorization: "Bearer " + userLogin.token } }).then((resp) => {
+
+                if (resp.data === 'Empty list') {
+                    setError(resp.data)
+
                 }
                 else {
+
                     setTransList(resp.data);
                     setError('')
-                    
+
                 }
 
             })
-            
+
         } catch (err) {
             setError('Error en base de datos')
         }
-    
-        totalMovements() 
+
+        totalMovements()
     }
 
     const setTransaction = async (e) => {
@@ -86,8 +89,8 @@ const Form = () => {
         }
         if (amount >= 0) {
             try {
-                await Axios.post('http://localhost:4000/transactions/add',transaction,{
-                 headers:{authorization:"Bearer " + userLogin.token}
+                await Axios.post('http://localhost:4000/transactions/', transaction, {
+                    headers: { authorization: "Bearer " + userLogin.token }
                 }).then(() => {
                     getTransactions()
                     setSuccess('Added successfully')
@@ -104,13 +107,15 @@ const Form = () => {
     }
 
     const deleteTransaction = async (id_transaction) => {
-    
+
         try {
-            await Axios.delete('http://localhost:4000/transactions/delete',{headers:{authorization:"Bearer " + userLogin.token}, data: {
-                id_transaction
-         }} ).then(() => {
-                
-            if (transList.length === 1) {
+            await Axios.delete('http://localhost:4000/transactions/', {
+                headers: { authorization: "Bearer " + userLogin.token }, data: {
+                    id_transaction
+                }
+            }).then(() => {
+
+                if (transList.length === 1) {
                     setTransList([])
                 }
                 getTransactions()
@@ -136,40 +141,41 @@ const Form = () => {
         e.preventDefault();
 
         try {
-            await Axios.post('http://localhost:4000/transactions/foundTransactionsByCategory', { id_user: userLogin.id, category: selectedCategory}, 
-        {headers:{authorization:"Bearer " + userLogin.token}}).then(resp => {
-                if (resp.data  === 'Empty list') {
-                    setTransList([])
-                    setError(resp.data)
-                    
-                }
-                else {
-                    setTransList(resp.data)
-                    setError('')
+            await Axios.get(`http://localhost:4000/transactions/filterCategory/${selectedCategory}/${userLogin.id}`,
+                { headers: { authorization: "Bearer " + userLogin.token } }).then(resp => {
+                    if (resp.data === 'Empty list') {
+                        setTransList([])
+                        setError(resp.data)
 
-                }
-            })
-        } catch (err) { 
+                    }
+                    else {
+                        setTransList(resp.data)
+                        setError('')
+
+                    }
+                })
+        } catch (err) {
             console.log(e)
-         }
+        }
 
     }
 
-    const totalMovements =  async () => {
+    const totalMovements = async () => {
 
         let totalDeposit = 0
-        let totalExtractions = 0 
+        let totalExtractions = 0
         let res = 0
         try {
-            await Axios.post('http://localhost:4000/transactions/getTransactionsByIdUser',  {id_user: userLogin.id}, {headers:{authorization:"Bearer " + userLogin.token} }).then((resp) => {
+            await Axios.get(`http://localhost:4000/transactions/list/${userLogin.id}`, { headers: { authorization: "Bearer " + userLogin.token } }).then((resp) => {
                 if (resp.data.trim) {
                     setError(resp.data)
+                    console.log(resp.data)
                 }
                 else {
-                    if(transList ===[]){
-                    setError('Empty list')
+                    if (transList === []) {
+                        setError('Empty list')
                     }
-        
+
                     resp.data.map(item => {
                         if (item.type_movement === 'Deposit') {
                             totalDeposit += item.amount
@@ -180,12 +186,12 @@ const Form = () => {
                 res = totalDeposit - totalExtractions
                 setTotalAmount(res)
             })
-           
+
         }
         catch (err) {
             console.log(err)
         }
-      
+
 
     }
 
@@ -251,35 +257,35 @@ const Form = () => {
 
                     <ul className='list-group mt-4 '>
                         {
-                       error === 'Empty list' ? (
-                            
-                            <div className='col d-flex flex-column'>
-                                <h2>{error}</h2>
-                            </div>
-                        )
-                            :
+                            error === 'Empty list' ? (
 
-                            (
-
-                                transList.map(item => (
-
-                                    <li className='d-flex text-align-center list-group-item mx-2' key={item.id_transaction}>
-                                        <div className='mx-3' >Concept {item.concept}</div>
-                                        <div className='mx-3'> Amount {item.amount}</div>
-                                        <div className='mx-3'> Movement {item.type_movement}</div>
-                                        <div className='mx-3'> Category {item.category}</div>
-                                        <div className='mx-3 me-3'> Date {moment(item.trans_date).format('YYYY-MM-DD')}</div>
-
-                                        <div className='container d-flex text-align-center justify-content-end'>
-                                            <button onClick={(id_transaction) => (editAvailable(item.id_transaction))} className='btn btn-primary btn-block mx-2'>Edit</button>
-                                            <button onClick={(id_transaction) => (deleteTransaction(item.id_transaction))} className='btn btn-danger btn-block'>Delete</button>
-
-                                        </div>
-                                    </li>
-
-                                ))
+                                <div className='col d-flex flex-column'>
+                                    <h2>{error}</h2>
+                                </div>
                             )
-                    }</ul>
+                                :
+
+                                (
+
+                                    transList.map(item => (
+
+                                        <li className='d-flex text-align-center list-group-item mx-2' key={item.id_transaction}>
+                                            <div className='mx-3' >Concept {item.concept}</div>
+                                            <div className='mx-3'> Amount {item.amount}</div>
+                                            <div className='mx-3'> Movement {item.type_movement}</div>
+                                            <div className='mx-3'> Category {item.category}</div>
+                                            <div className='mx-3 me-3'> Date {moment(item.trans_date).format('YYYY-MM-DD')}</div>
+
+                                            <div className='container d-flex text-align-center justify-content-end'>
+                                                <button onClick={(id_transaction) => (editAvailable(item.id_transaction))} className='btn btn-primary btn-block mx-2'>Edit</button>
+                                                <button onClick={(id_transaction) => (deleteTransaction(item.id_transaction))} className='btn btn-danger btn-block'>Delete</button>
+
+                                            </div>
+                                        </li>
+
+                                    ))
+                                )
+                        }</ul>
                     <div>
                         <b className='mx-2'>Filter By</b>
                         <select className=' mt-2' onChange={(e) => setSelectedCategory(e.target.value)} defaultValue={TYPE_CATEGORY_OPTIONS[0].value} required >

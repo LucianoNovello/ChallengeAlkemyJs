@@ -39,7 +39,8 @@ const Edit = () => {
     ]
 
     const viewEdit = async ()=>{
-        Axios.post('http://localhost:4000/transactions/getByIdTransaction', { id_transaction:transaction},{headers:{authorization:"Bearer "+userLogin.token}}).then((response) => {
+        const id_transaction = transaction
+        Axios.get(`http://localhost:4000/transactions/list2/${id_transaction}`, {headers:{authorization:"Bearer "+userLogin.token}}).then((response) => {
             setAmount(response.data[0].amount)
             setCategory(response.data[0].category)
             setConcept(response.data[0].concept)
@@ -61,7 +62,7 @@ const Edit = () => {
             id_transaction: idTransaction
         }
         try {
-            await Axios.patch('http://localhost:4000/transactions/editTransaction', transactionEdited,{headers:{authorization:"Bearer "+userLogin.token}}).then((resp => {
+            await Axios.patch('http://localhost:4000/transactions/', transactionEdited,{headers:{authorization:"Bearer "+userLogin.token}}).then((resp => {
                 setAmount('')
                 setConcept('')
                 setTransDate('')

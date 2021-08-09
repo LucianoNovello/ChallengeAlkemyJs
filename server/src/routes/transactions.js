@@ -8,9 +8,10 @@ const jwt = require('jsonwebtoken')
 
 const verifyToken = (req,res, next)=>{
     const authHeader = req.headers.authorization
+   
     if(authHeader){
         const token = authHeader.split(' ')[1];
-    
+       
         jwt.verify(token, keys,(err, user)=>{
             if(err){
               
@@ -27,7 +28,7 @@ const verifyToken = (req,res, next)=>{
     }
 
 }
-router.delete('/delete',verifyToken, (req, res) => {
+router.delete('/',verifyToken, (req, res) => {
 
     const { id_transaction} = req.body
    
@@ -44,21 +45,22 @@ router.delete('/delete',verifyToken, (req, res) => {
     })
 
 })
-router.post('/getTransactionsByIdUser',verifyToken, (req, res) => {
-    const { id_user } = req.body
-    
+router.get('/list/:id_user',verifyToken, (req, res) => {
+    const  id_user  = req.params.id_user
+   
     pool.query('SELECT * FROM transactions WHERE id_user = ? ORDER BY trans_date DESC LIMIT 10 ', [id_user], (err, results) => {
         if (err) {
             res.status(400).send(err)
             return
         }
         if (results.length) res.json(results)
-        else res.send('You dont have transactions availables')
+        else res.send('Empty list')
 
     })
 })
-router.post('/getByIdTransaction',verifyToken, (req, res) => {
-    const { id_transaction } = req.body
+router.get('/list2/:id_transaction',verifyToken, (req, res) => {
+    const  id_transaction  = req.params.id_transaction
+    console.log(id_transaction)
     pool.query('SELECT * FROM transactions WHERE id_transaction = ? ', [id_transaction], (err, results) => {
         if (err) {
             res.status(400).send(err)
@@ -68,7 +70,7 @@ router.post('/getByIdTransaction',verifyToken, (req, res) => {
         else res.json({})
     })
 })
-router.patch('/editTransaction', verifyToken, (req, res) => {
+router.patch('/', verifyToken, (req, res) => {
     const { id_transaction,
         amount,
         concept,
@@ -86,7 +88,7 @@ router.patch('/editTransaction', verifyToken, (req, res) => {
   
 })
 
-router.post('/add',verifyToken, (req, res) => {
+router.post('/',verifyToken, (req, res) => {
     const id_transaction = uniqid()
     
     const {
@@ -109,17 +111,18 @@ router.post('/add',verifyToken, (req, res) => {
     res.send('received')
      
 })
-router.post('/foundTransactionsByCategory', verifyToken, (req, res) => {
+router.get('/filterCategory/:category/:id_user', verifyToken, (req, res) => {
 
-    const { id_user, category } = req.body
+    const category = req.params.category
+    const id_user = req.params.id_user
     pool.query( `SELECT * FROM transactions WHERE id_user = '${id_user}' and category = '${category}' ORDER BY trans_date DESC LIMIT 10  `, (err, results) => {
         if (err) {
             res.status(400).send(err)
             return
+
         }
         if (results.length) res.json(results)
         else res.send('Empty list')
-        console.log(results)
         
     })
 })
