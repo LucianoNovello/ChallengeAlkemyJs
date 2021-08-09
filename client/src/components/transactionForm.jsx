@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import { AuthContext } from '../contexts/contextsutils'
 import moment from 'moment'
 
+
 const Form = () => {
     const history = useHistory()
     const { userLogin, setTrans, msg } = useContext(AuthContext)
@@ -25,8 +26,8 @@ const Form = () => {
         if (!userLogin) {
             history.replace('/logout')
         }
-        getTransactions()
-        totalMovements()
+       getTransactions()
+     
         if (msg) {
             setSuccess(msg)
         }
@@ -45,38 +46,48 @@ const Form = () => {
         { label: 'Deposit', value: 'Deposit' },
         { label: 'Extraction', value: 'Extraction' }
     ]
-    
+
     const getTransactions = async () => {
+       
+     const user={
+         id_user: userLogin.id
+     }
         try {
-
-            await Axios.post('http://localhost:4000/transactions/getTransactionsByIdUser', { id_user: userLogin.id }).then((response) => {
-
-                if (response.data.trim) {
+           
+            await Axios.post('http://localhost:4000/transactions/getTransactionsByIdUser',user, {headers:{authorization:"Bearer " + userLogin.token}},).then((resp) => {
+           
+                if (resp.data.trim) {
                     setError('Empty List')
-
                 }
                 else {
-                    setTransList(response.data);
+                    setTransList(resp.data);
+                    setError('')
+                    
                 }
 
             })
+            
         } catch (err) {
             setError('Error en base de datos')
         }
-        totalMovements()
+    
+        totalMovements() 
     }
 
     const setTransaction = async (e) => {
         e.preventDefault()
+        const transaction = {
+            amount: amount,
+            concept: concept,
+            type_movement: typeMovement,
+            category: category,
+            id_user: userLogin.id,
+            trans_date: transDate,
+        }
         if (amount >= 0) {
             try {
-                await Axios.post('http://localhost:4000/transactions/add', {
-                    amount: amount,
-                    concept: concept,
-                    type_movement: typeMovement,
-                    category: category,
-                    id_user: userLogin.id,
-                    trans_date: transDate
+                await Axios.post('http://localhost:4000/transactions/add',transaction,{
+                 headers:{authorization:"Bearer " + userLogin.token}
                 }).then(() => {
                     getTransactions()
                     setSuccess('Added successfully')
@@ -88,14 +99,18 @@ const Form = () => {
             }
 
         } else {
-            setSuccess('Put a positive amount')
+            setError('Put a positive amount')
         }
     }
 
     const deleteTransaction = async (id_transaction) => {
+    
         try {
-            await Axios.delete('http://localhost:4000/transactions/delete', { data: { id_transaction } }).then(() => {
-                if (transList.length === 1) {
+            await Axios.delete('http://localhost:4000/transactions/delete',{headers:{authorization:"Bearer " + userLogin.token}, data: {
+                id_transaction
+         }} ).then(() => {
+                
+            if (transList.length === 1) {
                     setTransList([])
                 }
                 getTransactions()
@@ -121,54 +136,56 @@ const Form = () => {
         e.preventDefault();
 
         try {
-            await Axios.post('http://localhost:4000/transactions/foundTransactionsByCategory', { id_user: userLogin.id, category: selectedCategory }).then(resp => {
-                if (resp.data === 'Empty list') {
+            await Axios.post('http://localhost:4000/transactions/foundTransactionsByCategory', { id_user: userLogin.id, category: selectedCategory}, 
+        {headers:{authorization:"Bearer " + userLogin.token}}).then(resp => {
+                if (resp.data  === 'Empty list') {
+                    setTransList([])
                     setError(resp.data)
+                    
                 }
                 else {
                     setTransList(resp.data)
+                    setError('')
 
                 }
             })
-        } catch (err) { console.log(e); }
+        } catch (err) { 
+            console.log(e)
+         }
 
     }
-    const totalMovements = async () => {
+
+    const totalMovements =  async () => {
 
         let totalDeposit = 0
-        let totalExtractions = 0
+        let totalExtractions = 0 
         let res = 0
-
-        const user = {
-            id_user: userLogin.id
-        }
-
         try {
-            await Axios.post('http://localhost:4000/transactions/getTransactionsByIdUser', user).then((resp => {
+            await Axios.post('http://localhost:4000/transactions/getTransactionsByIdUser',  {id_user: userLogin.id}, {headers:{authorization:"Bearer " + userLogin.token} }).then((resp) => {
                 if (resp.data.trim) {
                     setError(resp.data)
                 }
                 else {
-                    if (transList === []) {
-                        setError('Empty list')
+                    if(transList ===[]){
+                    setError('Empty list')
                     }
-                    else {
-                        resp.data.map(item => {
-                            if (item.type_movement === 'Deposit') {
-                                totalDeposit += item.amount
-                            }
-                            else totalExtractions += item.amount
-                        })
-
-                    }
+        
+                    resp.data.map(item => {
+                        if (item.type_movement === 'Deposit') {
+                            totalDeposit += item.amount
+                        }
+                        else totalExtractions += item.amount
+                    })
                 }
-            }))
-        } catch (e) { console.log(e) }
-
-
-        res = totalDeposit - totalExtractions
-
-        setTotalAmount(res)
+                res = totalDeposit - totalExtractions
+                setTotalAmount(res)
+            })
+           
+        }
+        catch (err) {
+            console.log(err)
+        }
+      
 
     }
 
@@ -232,10 +249,10 @@ const Form = () => {
                     <h2>Transacion List</h2>
 
 
-                    <ul className='list-group mt-4 '>{
-
-                        transList.length === 0 ? (
-
+                    <ul className='list-group mt-4 '>
+                        {
+                       error === 'Empty list' ? (
+                            
                             <div className='col d-flex flex-column'>
                                 <h2>{error}</h2>
                             </div>

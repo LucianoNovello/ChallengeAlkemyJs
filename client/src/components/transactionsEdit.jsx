@@ -15,9 +15,6 @@ const Edit = () => {
     const [transDate, setTransDate] = useState('')
     const [error, setError] = useState('')
     const [idTransaction, setIdTransaction] = useState('')
-  
-
-
     
     useEffect(() => {
        
@@ -42,8 +39,7 @@ const Edit = () => {
     ]
 
     const viewEdit = async ()=>{
-        Axios.post('http://localhost:4000/transactions/getByIdTransaction', { id_transaction:transaction}).then((response) => {
-            console.log(response)
+        Axios.post('http://localhost:4000/transactions/getByIdTransaction', { id_transaction:transaction},{headers:{authorization:"Bearer "+userLogin.token}}).then((response) => {
             setAmount(response.data[0].amount)
             setCategory(response.data[0].category)
             setConcept(response.data[0].concept)
@@ -65,7 +61,7 @@ const Edit = () => {
             id_transaction: idTransaction
         }
         try {
-            await Axios.patch('http://localhost:4000/transactions/editTransaction', transactionEdited).then((resp => {
+            await Axios.patch('http://localhost:4000/transactions/editTransaction', transactionEdited,{headers:{authorization:"Bearer "+userLogin.token}}).then((resp => {
                 setAmount('')
                 setConcept('')
                 setTransDate('')

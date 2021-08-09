@@ -6,17 +6,19 @@ const {keys} = require('../keys')
 const jwt = require('jsonwebtoken') 
 
 
-const verifyToken =(req,res, next)=>{
+const verifyToken = (req,res, next)=>{
     const authHeader = req.headers.authorization
     if(authHeader){
         const token = authHeader.split(' ')[1];
+    
         jwt.verify(token, keys,(err, user)=>{
             if(err){
-                console.log(err)
+              
                 return res.status(403).json('token is not valid!')
-                
             }
+            
             req.user = user
+           
             next()
         })
     }
@@ -25,9 +27,10 @@ const verifyToken =(req,res, next)=>{
     }
 
 }
-router.delete('/delete',/*verifyToken*/ (req, res) => {
+router.delete('/delete',verifyToken, (req, res) => {
 
-    const { id_transaction } = req.body
+    const { id_transaction} = req.body
+   
     pool.query('DELETE FROM transactions WHERE id_transaction = ?', [id_transaction], (err, results) => {
         if (err) {
             res.status(400).send(err)
@@ -37,13 +40,13 @@ router.delete('/delete',/*verifyToken*/ (req, res) => {
             status: 200,
             sucess: true
         })
+
     })
 
-
 })
-router.post('/getTransactionsByIdUser',/*verifyToken*/ (req, res) => {
+router.post('/getTransactionsByIdUser',verifyToken, (req, res) => {
     const { id_user } = req.body
-
+    
     pool.query('SELECT * FROM transactions WHERE id_user = ? ORDER BY trans_date DESC LIMIT 10 ', [id_user], (err, results) => {
         if (err) {
             res.status(400).send(err)
@@ -54,7 +57,7 @@ router.post('/getTransactionsByIdUser',/*verifyToken*/ (req, res) => {
 
     })
 })
-router.post('/getByIdTransaction',/*verifyToken*/ (req, res) => {
+router.post('/getByIdTransaction',verifyToken, (req, res) => {
     const { id_transaction } = req.body
     pool.query('SELECT * FROM transactions WHERE id_transaction = ? ', [id_transaction], (err, results) => {
         if (err) {
@@ -65,12 +68,13 @@ router.post('/getByIdTransaction',/*verifyToken*/ (req, res) => {
         else res.json({})
     })
 })
-router.patch('/editTransaction', /*verifyToken,*/ (req, res) => {
+router.patch('/editTransaction', verifyToken, (req, res) => {
     const { id_transaction,
         amount,
         concept,
         category,
-        trans_date } = req.body
+        trans_date} = req.body
+    
     pool.query(`UPDATE transactions SET amount = '${amount}', concept ='${concept}', category='${category}', trans_date='${trans_date}' WHERE id_transaction = '${id_transaction}' `, (err, results) => {
         if (err) {
             res.status(400).send(err)
@@ -79,10 +83,12 @@ router.patch('/editTransaction', /*verifyToken,*/ (req, res) => {
         if (results.length) res.json(results)
         else res.json({})
     })
+  
 })
 
-router.post('/add',/*verifyToken,*/ (req, res) => {
+router.post('/add',verifyToken, (req, res) => {
     const id_transaction = uniqid()
+    
     const {
         amount,
         concept,
@@ -101,20 +107,19 @@ router.post('/add',/*verifyToken,*/ (req, res) => {
     }
     pool.query('INSERT INTO transactions SET ? ', [newTrans])
     res.send('received')
+     
 })
-router.post('/foundTransactionsByCategory',/*verifyToken,*/ (req, res) => {
+router.post('/foundTransactionsByCategory', verifyToken, (req, res) => {
 
-    const { id_user, category } = req.body;
-
+    const { id_user, category } = req.body
     pool.query( `SELECT * FROM transactions WHERE id_user = '${id_user}' and category = '${category}' ORDER BY trans_date DESC LIMIT 10  `, (err, results) => {
         if (err) {
             res.status(400).send(err)
             return
         }
         if (results.length) res.json(results)
-    
         else res.send('Empty list')
-   
+        console.log(results)
         
     })
 })

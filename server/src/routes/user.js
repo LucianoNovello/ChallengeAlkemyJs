@@ -22,12 +22,13 @@ router.post('/login', (req, res) => {
                 const originalPass = bytes.toString(CryptoJS.enc.Utf8);
                 if(originalPass !== password){
                     res.send('User or Password are wrong')   
-                }
-                const accessToken = jwt.sign({id: results[0].id_user, email: results[0].email}, keys, {expiresIn: "30s" })
-          
-                const {pass, ...info} = results[0]   
-               
-                res.json({...info, accessToken})
+              
+                    } else {
+                        const token = generateAcessToken(results[0]);
+                        const userEmail = results[0].email;
+                        const id = results[0].id_user;
+                        res.json({id , userEmail, token});
+                    }
             }
             else res.send('User or Password are wrong')
         })
@@ -37,20 +38,12 @@ router.post('/login', (req, res) => {
     }
 })
 
-const verifyToken =(req,res, next)=>{
-    const authHeader = req.headers.authorization
-    if(authHeader){
-        const token= authHeader.split(' ')[1];
-        jwt.verify(token, keys,(err, user)=>{
-            if(err){
-                return res.status(403).json('token is not valid!')
-            }
-            req.user = user
-            next()
-        })
-    }
-
+const generateAcessToken = (user) => {
+    return jwt.sign({ id: user.id_user, email: user.email },
+        keys,
+        { expiresIn: '1h' })
 }
+
 
 router.post('/register',  (req, res) => {
     const id_user = uniqid()

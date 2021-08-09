@@ -27,13 +27,14 @@ const Login = () => {
                 if(resp.data.trim)setMsgError(resp.data)
                 else{
                   
-                    const idUser = resp.data.id_user
+                   
                     const logged={
-                        id: idUser,
-                        email: resp.data.email
+                        id: resp.data.id,
+                        email: resp.data.userEmail,
+                        token: resp.data.token
                     }
                     login(logged)
-                    history.push(`/transactions/${idUser}`)
+                    history.push(`/transactions/${logged.id}`)
                 }
             }))
 
