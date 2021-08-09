@@ -60,7 +60,6 @@ router.get('/list/:id_user',verifyToken, (req, res) => {
 })
 router.get('/list2/:id_transaction',verifyToken, (req, res) => {
     const  id_transaction  = req.params.id_transaction
-    console.log(id_transaction)
     pool.query('SELECT * FROM transactions WHERE id_transaction = ? ', [id_transaction], (err, results) => {
         if (err) {
             res.status(400).send(err)

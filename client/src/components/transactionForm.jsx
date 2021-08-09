@@ -169,7 +169,7 @@ const Form = () => {
             await Axios.get(`http://localhost:4000/transactions/list/${userLogin.id}`, { headers: { authorization: "Bearer " + userLogin.token } }).then((resp) => {
                 if (resp.data.trim) {
                     setError(resp.data)
-                    console.log(resp.data)
+                 
                 }
                 else {
                     if (transList === []) {
