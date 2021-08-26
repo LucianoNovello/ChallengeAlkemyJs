@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom'
 import Axios from 'axios'
 import { AuthContext } from '../contexts/contextsutils'
 const Login = () => {
-    const {login, msg, setToken}= useContext(AuthContext) 
+    const {login, msg}= useContext(AuthContext) 
     const history = useHistory()
     const [email, setEmail]= useState('')
     const [pass, setPass]= useState('')
